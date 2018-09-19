@@ -1,8 +1,5 @@
-# learn_flutter1
+# Sample Flutter Project
 
-A new Flutter project.
+this is a learning project for flutter
 
-## Getting Started
-
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+1. First tutorial [https://flutter.io/get-started/codelab/](https://flutter.io/get-started/codelab/)
