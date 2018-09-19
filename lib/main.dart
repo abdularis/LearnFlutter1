@@ -11,7 +11,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
         title: 'Flutter Demo',
-        home: RandomWords()
+        home: RandomWords(),
+        theme: ThemeData(
+          primaryColor: Colors.white,
+          accentColor: Colors.blueGrey
+        ),
     );
   }
 }
@@ -24,6 +28,7 @@ class RandomWords extends StatefulWidget {
 
 class RandomWordsState extends State<RandomWords> {
   final _suggestions = <WordPair>[];
+  final _saved = new Set<WordPair>();
 
   Widget _buildSuggestions() {
     return ListView.builder(
@@ -41,11 +46,49 @@ class RandomWordsState extends State<RandomWords> {
   }
 
   Widget _buildRow(WordPair wordPair) {
+    final alreadySaved = _saved.contains(wordPair);
     return ListTile(
       title: Text(
         wordPair.asPascalCase,
         style: const TextStyle(fontSize: 18.0),
       ),
+      trailing: Icon(
+        alreadySaved ? Icons.favorite : Icons.favorite_border,
+        color: alreadySaved ? Colors.red : null,
+      ),
+      onTap: () {
+        setState(() {
+          if (alreadySaved) {
+            _saved.remove(wordPair);
+          } else {
+            _saved.add(wordPair);
+          }
+        });
+      },
+    );
+  }
+
+  _pushSaved() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          final tiles = _saved.map((wordPair) {
+            return ListTile (title: Text(wordPair.asPascalCase));
+          });
+          final divided = ListTile.divideTiles(
+            context: context,
+            tiles: tiles
+          )
+          .toList();
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Text("Saved Suggestions")
+            ),
+            body: ListView(children: divided)
+          );
+        }
+      )
     );
   }
 
@@ -53,7 +96,8 @@ class RandomWordsState extends State<RandomWords> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Startup Names")
+        title: Text("Startup Names"),
+        actions: <Widget>[IconButton(icon: Icon(Icons.list), onPressed: _pushSaved)],
       ),
       body: _buildSuggestions(),
     );
